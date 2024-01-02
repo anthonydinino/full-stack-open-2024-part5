@@ -9,11 +9,21 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [notification, setNotification] = useState(null);
   const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
 
+  const setNotificationWithTimeout = ({ message, isError }) => {
+    setNotification({ message, isError });
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const refreshBlogs = async () => {
+    const blogs = await blogService.getAll();
+    setBlogs(blogs);
+  };
+
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    refreshBlogs();
   }, []);
 
   useEffect(() => {
@@ -43,35 +53,33 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (e) {
-      setErrorMessage({
-        message: e.response.data.msg || e.message || "Wrong credentials",
+      setNotificationWithTimeout({
+        message: e.response?.status
+          ? "wrong username or password"
+          : "something went wrong",
         isError: true,
       });
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
     }
   };
 
   const createBlog = async (e) => {
     e.preventDefault();
     try {
-      const blog = await blogService.create(newBlog);
-      if (blog) {
-        console.log(blog);
-      }
+      await blogService.create(newBlog);
+      setNotificationWithTimeout({
+        message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+        isError: false,
+      });
+      refreshBlogs();
     } catch (error) {
-      setErrorMessage({ message: error.message, isError: true });
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      setNotificationWithTimeout({ message: error.message, isError: true });
     }
   };
 
   if (user === null) {
     return (
       <div>
-        <Notification messageInfo={{ message: errorMessage, isError: true }} />
+        <Notification messageInfo={notification} />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -99,7 +107,7 @@ const App = () => {
   }
   return (
     <div>
-      <Notification messageInfo={{ message: errorMessage, isError: true }} />
+      <Notification messageInfo={notification} />
       <h2>blogs</h2>
       <p>
         {user.username} logged in<button onClick={handleLogout}>logout</button>
