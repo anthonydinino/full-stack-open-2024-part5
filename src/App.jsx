@@ -43,7 +43,10 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (e) {
-      setErrorMessage(e.response.data.msg || e.message || "Wrong credentials");
+      setErrorMessage({
+        message: e.response.data.msg || e.message || "Wrong credentials",
+        isError: true,
+      });
       setTimeout(() => {
         setErrorMessage(null);
       }, 5000);
@@ -58,14 +61,17 @@ const App = () => {
         console.log(blog);
       }
     } catch (error) {
-      setErrorMessage(error.response.data.msg || error.message);
+      setErrorMessage({ message: error.message, isError: true });
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     }
   };
 
   if (user === null) {
     return (
       <div>
-        <Notification message={errorMessage} />
+        <Notification messageInfo={{ message: errorMessage, isError: true }} />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -93,6 +99,7 @@ const App = () => {
   }
   return (
     <div>
+      <Notification messageInfo={{ message: errorMessage, isError: true }} />
       <h2>blogs</h2>
       <p>
         {user.username} logged in<button onClick={handleLogout}>logout</button>
