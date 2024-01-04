@@ -12,9 +12,8 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState(null);
-  const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
 
-  const setNotificationWithTimeout = ({ message, isError }) => {
+  const notify = ({ message, isError }) => {
     setNotification({ message, isError });
     setTimeout(() => setNotification(null), 3000);
   };
@@ -55,26 +54,12 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (e) {
-      setNotificationWithTimeout({
+      notify({
         message: e.response?.status
           ? "wrong username or password"
           : "something went wrong",
         isError: true,
       });
-    }
-  };
-
-  const createBlog = async (e) => {
-    e.preventDefault();
-    try {
-      await blogService.create(newBlog);
-      setNotificationWithTimeout({
-        message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        isError: false,
-      });
-      refreshBlogs();
-    } catch (error) {
-      setNotificationWithTimeout({ message: error.message, isError: true });
     }
   };
 
@@ -116,9 +101,9 @@ const App = () => {
       </p>
       <Togglable buttonLabel="new blog">
         <BlogForm
-          createBlog={createBlog}
-          setNewBlog={setNewBlog}
-          newBlog={newBlog}
+          notify={notify}
+          blogService={blogService}
+          refreshBlogs={refreshBlogs}
         />
       </Togglable>
       {blogs.map((blog) => (
