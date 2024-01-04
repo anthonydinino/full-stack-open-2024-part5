@@ -1,7 +1,40 @@
-const Blog = ({ blog }) => (
-  <div>
-    {blog.title} {blog.author}
-  </div>  
-)
+import { useState } from "react";
 
-export default Blog
+const Blog = ({ blog }) => {
+  const [showBlog, setShowBlog] = useState(false);
+
+  const blogStyle = {
+    paddingTop: 10,
+    paddingLeft: 2,
+    border: "solid",
+    borderWidth: 1,
+    marginBottom: 5,
+  };
+
+  const blogDetails = () => {
+    return (
+      <div>
+        <a href={blog.url} target="_blank">
+          {blog.url}
+        </a>
+        <div style={{ display: "flex" }}>
+          <p>likes {blog.likes}</p>
+          <button>like</button>
+        </div>
+        <p>{blog.user.name}</p>
+      </div>
+    );
+  };
+
+  return (
+    <div style={blogStyle}>
+      {blog.title} {blog.author}{" "}
+      <button onClick={() => setShowBlog(!showBlog)}>
+        {showBlog ? "hide" : "view"}
+      </button>
+      {showBlog && blogDetails()}
+    </div>
+  );
+};
+
+export default Blog;
