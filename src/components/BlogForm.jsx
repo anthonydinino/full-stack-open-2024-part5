@@ -1,26 +1,18 @@
 import { useState } from "react";
 
-const BlogForm = ({ notify, blogService, refreshBlogs }) => {
+const BlogForm = ({ createBlog }) => {
   const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
 
-  const createBlog = async (e) => {
+  const addBlog = async (e) => {
     e.preventDefault();
-    try {
-      await blogService.create(newBlog);
-      notify({
-        message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
-        isError: false,
-      });
-      refreshBlogs();
-    } catch (error) {
-      notify({ message: error.message, isError: true });
-    }
+    createBlog(newBlog);
+    setNewBlog({ title: "", author: "", url: "" });
   };
 
   return (
     <>
       <h2>create new</h2>
-      <form onSubmit={createBlog}>
+      <form onSubmit={addBlog}>
         <label htmlFor="Title">title:</label>
         <input
           type="text"

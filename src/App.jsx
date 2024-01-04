@@ -23,6 +23,19 @@ const App = () => {
     setBlogs(blogs);
   };
 
+  const createBlog = async (newBlog) => {
+    try {
+      await blogService.create(newBlog);
+      notify({
+        message: `a new blog ${newBlog.title} by ${newBlog.author} added`,
+        isError: false,
+      });
+      refreshBlogs();
+    } catch (error) {
+      notify({ message: error.message, isError: true });
+    }
+  };
+
   useEffect(() => {
     refreshBlogs();
   }, []);
@@ -100,11 +113,7 @@ const App = () => {
         {user.username} logged in<button onClick={handleLogout}>logout</button>
       </p>
       <Togglable buttonLabel="new blog">
-        <BlogForm
-          notify={notify}
-          blogService={blogService}
-          refreshBlogs={refreshBlogs}
-        />
+        <BlogForm createBlog={createBlog} />
       </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
