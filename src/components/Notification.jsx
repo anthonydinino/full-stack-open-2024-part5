@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const Notification = ({ messageInfo }) => {
   if (messageInfo) {
     const { message, isError } = messageInfo;
@@ -7,6 +9,10 @@ const Notification = ({ messageInfo }) => {
   } else {
     return <></>;
   }
+};
+
+Notification.propTypes = {
+  messageInfo: PropTypes.string,
 };
 
 export default Notification;

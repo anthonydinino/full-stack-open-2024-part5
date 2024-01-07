@@ -1,5 +1,6 @@
 import { useState } from "react";
 import blogs from "../services/blogs";
+import PropTypes from "prop-types";
 
 const Blog = ({ blog, refreshBlogs }) => {
   const [showBlog, setShowBlog] = useState(false);
@@ -31,7 +32,7 @@ const Blog = ({ blog, refreshBlogs }) => {
   const blogDetails = () => {
     return (
       <div>
-        <a href={blog.url} target="_blank">
+        <a href={blog.url} target="_blank" rel="noreferrer">
           {blog.url}
         </a>
         <div style={{ display: "flex" }}>
@@ -53,6 +54,11 @@ const Blog = ({ blog, refreshBlogs }) => {
       {showBlog && blogDetails()}
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  refreshBlogs: PropTypes.func.isRequired,
 };
 
 export default Blog;
