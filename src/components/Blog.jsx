@@ -1,6 +1,7 @@
 import { useState } from "react";
+import blogs from "../services/blogs";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, refreshBlogs }) => {
   const [showBlog, setShowBlog] = useState(false);
 
   const blogStyle = {
@@ -11,6 +12,15 @@ const Blog = ({ blog }) => {
     marginBottom: 5,
   };
 
+  const addLike = async () => {
+    await blogs.put(blog.id, {
+      ...blog,
+      likes: ++blog.likes,
+      user: blog.user.id,
+    });
+    refreshBlogs();
+  };
+
   const blogDetails = () => {
     return (
       <div>
@@ -19,7 +29,7 @@ const Blog = ({ blog }) => {
         </a>
         <div style={{ display: "flex" }}>
           <p>likes {blog.likes}</p>
-          <button>like</button>
+          <button onClick={addLike}>like</button>
         </div>
         <p>{blog.user.name}</p>
       </div>
