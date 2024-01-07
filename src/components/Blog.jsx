@@ -21,6 +21,13 @@ const Blog = ({ blog, refreshBlogs }) => {
     refreshBlogs();
   };
 
+  const deleteBlog = async () => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      await blogs.deleteBlog(blog.id);
+      refreshBlogs();
+    }
+  };
+
   const blogDetails = () => {
     return (
       <div>
@@ -32,6 +39,7 @@ const Blog = ({ blog, refreshBlogs }) => {
           <button onClick={addLike}>like</button>
         </div>
         <p>{blog.user.name}</p>
+        <button onClick={deleteBlog}>remove</button>
       </div>
     );
   };
