@@ -1,8 +1,7 @@
 import { useState } from "react";
-import blogs from "../services/blogs";
 import PropTypes from "prop-types";
 
-const Blog = ({ blog, refreshBlogs }) => {
+const Blog = ({ blog, addLike, deleteBlog }) => {
   const [showBlog, setShowBlog] = useState(false);
 
   const blogStyle = {
@@ -13,22 +12,6 @@ const Blog = ({ blog, refreshBlogs }) => {
     marginBottom: 5,
   };
 
-  const addLike = async () => {
-    await blogs.put(blog.id, {
-      ...blog,
-      likes: ++blog.likes,
-      user: blog.user.id,
-    });
-    refreshBlogs();
-  };
-
-  const deleteBlog = async () => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      await blogs.deleteBlog(blog.id);
-      refreshBlogs();
-    }
-  };
-
   const blogDetails = () => {
     return (
       <div>
@@ -37,10 +20,10 @@ const Blog = ({ blog, refreshBlogs }) => {
         </a>
         <div style={{ display: "flex" }}>
           <p>likes {blog.likes}</p>
-          <button onClick={addLike}>like</button>
+          <button onClick={() => addLike(blog)}>like</button>
         </div>
         <p>{blog.user.name}</p>
-        <button onClick={deleteBlog}>remove</button>
+        <button onClick={() => deleteBlog(blog)}>remove</button>
       </div>
     );
   };

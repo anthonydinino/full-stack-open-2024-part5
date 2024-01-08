@@ -18,6 +18,22 @@ const App = () => {
     setTimeout(() => setNotification(null), 3000);
   };
 
+  const addLike = async (blog) => {
+    await blogService.put(blog.id, {
+      ...blog,
+      likes: ++blog.likes,
+      user: blog.user.id,
+    });
+    refreshBlogs();
+  };
+
+  const deleteBlog = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      await blogs.deleteBlog(blog.id);
+      refreshBlogs();
+    }
+  };
+
   const refreshBlogs = async () => {
     const blogs = await blogService.getAll();
     setBlogs(blogs);
@@ -119,7 +135,12 @@ const App = () => {
       {blogs
         .sort((a, b) => b.likes - a.likes)
         .map((blog) => (
-          <Blog key={blog.id} blog={blog} refreshBlogs={refreshBlogs} />
+          <Blog
+            key={blog.id}
+            blog={blog}
+            addLike={addLike}
+            deleteBlog={deleteBlog}
+          />
         ))}
     </div>
   );
