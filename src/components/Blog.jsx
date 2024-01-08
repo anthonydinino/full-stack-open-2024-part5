@@ -46,7 +46,7 @@ const Blog = ({ blog, refreshBlogs }) => {
   };
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       {blog.title} {blog.author}{" "}
       <button onClick={() => setShowBlog(!showBlog)}>
         {showBlog ? "hide" : "view"}
@@ -59,6 +59,10 @@ const Blog = ({ blog, refreshBlogs }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   refreshBlogs: PropTypes.func.isRequired,
+};
+
+Blog.defaultProps = {
+  refreshBlogs: () => {},
 };
 
 export default Blog;
