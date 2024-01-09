@@ -58,7 +58,7 @@ describe("Blog app", function () {
     });
   });
 
-  describe("Blog is created", function () {
+  describe.only("Blog is created", function () {
     beforeEach(function () {
       cy.login({ username: "adinino", password: "password" });
       cy.createBlog({
@@ -74,6 +74,13 @@ describe("Blog app", function () {
         cy.get("button").contains("like").click();
         cy.contains("likes").should("contain.text", "likes 1");
       });
+    });
+    it("user can delete their own blog", function () {
+      cy.get(".blog").within(() => {
+        cy.contains("view").click();
+        cy.contains("remove").click();
+      });
+      cy.get("html").contains(".blog").should("not.exist");
     });
   });
 });

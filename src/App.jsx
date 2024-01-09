@@ -29,7 +29,7 @@ const App = () => {
 
   const deleteBlog = async (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      await blogs.deleteBlog(blog.id);
+      await blogService.deleteBlog(blog.id);
       refreshBlogs();
     }
   };
