@@ -3,7 +3,14 @@ describe("Blog app", function () {
   beforeEach(function () {
     cy.request("POST", "http://localhost:3003/api/testing/reset");
     cy.visit("http://localhost:5173");
+    const user = {
+      username: "adinino",
+      name: "Anthony Dinino",
+      password: "password",
+    };
+    cy.request("POST", "http://localhost:3003/api/users", user);
   });
+
   it("Login form is shown", function () {
     cy.contains("Log in to application");
     cy.get("form").should("have.descendants", "input");
@@ -12,14 +19,6 @@ describe("Blog app", function () {
   });
 
   describe("Login", function () {
-    beforeEach(function () {
-      const user = {
-        username: "adinino",
-        name: "Anthony Dinino",
-        password: "password",
-      };
-      cy.request("POST", "http://localhost:3003/api/users", user);
-    });
     it("succeeds with correct credentials", function () {
       cy.get("#username").type("adinino");
       cy.get("#password").type("password");
@@ -35,6 +34,46 @@ describe("Blog app", function () {
       cy.get(".notification").should("have.css", "border-style", "solid");
       cy.get(".notification").should("have.css", "color", "rgb(255, 0, 0)");
       cy.get("html").should("not.contain", "adinino logged in");
+    });
+  });
+  describe("When logged in", function () {
+    beforeEach(function () {
+      cy.login({ username: "adinino", password: "password" });
+    });
+    it("A blog can be created", function () {
+      cy.contains("create new blog").click();
+      cy.get("form").within(() => {
+        cy.get("#blog-title").type("Cypress Testing!");
+        cy.get("#blog-author").type("Anthony U. Dinino");
+        cy.get("#blog-url").type("https://testblog.com.au/blogs/1");
+        cy.get("button").click();
+      });
+      cy.get(".notification")
+        .should(
+          "contain",
+          "a new blog Cypress Testing! by Anthony U. Dinino added"
+        )
+        .and("have.css", "color", "rgb(0, 128, 0)");
+      cy.get(".blog").should("contain", "Cypress Testing! Anthony U. Dinino");
+    });
+  });
+
+  describe("Blog is created", function () {
+    beforeEach(function () {
+      cy.login({ username: "adinino", password: "password" });
+      cy.createBlog({
+        title: "Cypress Testing!",
+        author: "Anthony U. Dinino",
+        url: "https://testblog.com.au/blogs/1",
+        likes: 0,
+      });
+    });
+    it("user can like a blog", function () {
+      cy.get(".blog").within(() => {
+        cy.contains("view").click();
+        cy.get("button").contains("like").click();
+        cy.contains("likes").should("contain.text", "likes 1");
+      });
     });
   });
 });
