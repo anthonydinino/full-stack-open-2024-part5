@@ -26,9 +26,12 @@
 
 Cypress.Commands.add("login", ({ username, password }) => {
   cy.request("POST", `${Cypress.env("BACKEND")}/login/`, {
-    username: "adinino",
-    password: "password",
+    username,
+    password,
   }).then((response) => {
+    console.log(
+      `changing loggedBlogappUser to ${JSON.stringify(response.body)}`
+    );
     localStorage.setItem("loggedBlogappUser", JSON.stringify(response.body));
     cy.visit("");
   });
@@ -46,4 +49,8 @@ Cypress.Commands.add("createBlog", (blog) => {
     },
   });
   cy.visit("");
+});
+
+Cypress.Commands.add("createUser", (user) => {
+  cy.request("POST", "http://localhost:3003/api/users", user);
 });

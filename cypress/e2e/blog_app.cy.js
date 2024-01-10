@@ -3,12 +3,11 @@ describe("Blog app", function () {
   beforeEach(function () {
     cy.request("POST", "http://localhost:3003/api/testing/reset");
     cy.visit("http://localhost:5173");
-    const user = {
+    cy.createUser({
       username: "adinino",
       name: "Anthony Dinino",
       password: "password",
-    };
-    cy.request("POST", "http://localhost:3003/api/users", user);
+    });
   });
 
   it("Login form is shown", function () {
@@ -58,7 +57,7 @@ describe("Blog app", function () {
     });
   });
 
-  describe.only("Blog is created", function () {
+  describe("Blog is created", function () {
     beforeEach(function () {
       cy.login({ username: "adinino", password: "password" });
       cy.createBlog({
@@ -81,6 +80,14 @@ describe("Blog app", function () {
         cy.contains("remove").click();
       });
       cy.get("html").contains(".blog").should("not.exist");
+    });
+    it.only("only creator can see the delete button", () => {
+      cy.createUser({ username: "test", password: "password" });
+      cy.login({ username: "test", password: "password" });
+      cy.get(".blog").within(() => {
+        cy.contains("view").click();
+        cy.get("button").contains("remove").should("not.exist");
+      });
     });
   });
 });
