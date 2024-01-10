@@ -81,7 +81,7 @@ describe("Blog app", function () {
       });
       cy.get("html").contains(".blog").should("not.exist");
     });
-    it.only("only creator can see the delete button", () => {
+    it("only creator can see the delete button", () => {
       cy.createUser({ username: "test", password: "password" });
       cy.login({ username: "test", password: "password" });
       cy.get(".blog").within(() => {

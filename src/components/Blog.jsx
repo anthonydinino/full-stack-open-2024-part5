@@ -12,6 +12,10 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
     marginBottom: 5,
   };
 
+  const blogIsFromUser = (blog) =>
+    blog.user.username ===
+    JSON.parse(localStorage.getItem("loggedBlogappUser")).username;
+
   const blogDetails = () => {
     return (
       <div>
@@ -23,7 +27,9 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
           <button onClick={() => addLike(blog)}>like</button>
         </div>
         <p>{blog.user.name}</p>
-        <button onClick={() => deleteBlog(blog)}>remove</button>
+        {blogIsFromUser(blog) && (
+          <button onClick={() => deleteBlog(blog)}>remove</button>
+        )}
       </div>
     );
   };
