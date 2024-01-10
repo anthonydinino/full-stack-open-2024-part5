@@ -64,7 +64,6 @@ describe("Blog app", function () {
         title: "Cypress Testing!",
         author: "Anthony U. Dinino",
         url: "https://testblog.com.au/blogs/1",
-        likes: 0,
       });
     });
     it("user can like a blog", function () {
@@ -88,6 +87,22 @@ describe("Blog app", function () {
         cy.contains("view").click();
         cy.get("button").contains("remove").should("not.exist");
       });
+    });
+    it("blogs are ordered according to likes descending", () => {
+      cy.createBlog({
+        title: "An Amazing Blog",
+        author: "Anthony U. Dinino",
+        url: "https://testblog.com.au/blogs/2",
+      });
+      cy.get(".blog").eq(0).should("contain.text", "Cypress Testing!");
+      cy.get(".blog").eq(0).contains("view").click();
+      cy.get(".blog")
+        .eq(1)
+        .within(() => {
+          cy.contains("view").click();
+          cy.get("button").contains("like").click();
+        });
+      cy.get(".blog").eq(0).should("contain.text", "An Amazing Blog");
     });
   });
 });
